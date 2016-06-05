@@ -1,14 +1,71 @@
 ---
 title: "Reproducible Research: Peer Assessment 1"
+author: "J Go"
+date: "June 5, 2016"
 output: 
   html_document:
     keep_md: true
 ---
 
-
 ## Loading and preprocessing the data
+### fork/clone the Coursera repository
+### manually fork course project 1 from course github to personal github
+```
+Open Safari web browser
+Login to my github account at https://github.com/JGoDC/
+Open another tab for coursera course repo at:
+http://github.com/rdpeng/RepData_PeerAssessment1
+Click on fork on course github repo page in browser
+Select proper destination since a choice exists
+Now have forked repo at:
+https://github.com/JGoDC/RepData_PeerAssessment1
+```
+### manually clone course project 1 from github to local machine
+```
+$ cd ~/coursera/r
+$ git clone https://github.com/JGoDC/RepData_PeerAssessment1
+Now have cloned repo in new directory on local machine with following files:
+~/coursera/r/RepData_PeerAssessment1
+drwxr-xr-x  3 j  staff    102 Jun  2 20:34 instructions_fig
+drwxr-xr-x  3 j  staff    102 Jun  2 20:34 doc
+-rw-r--r--  1 j  staff  53559 Jun  2 20:34 activity.zip
+-rw-r--r--  1 j  staff   7776 Jun  2 20:34 README.md
+-rw-r--r--  1 j  staff    358 Jun  2 20:34 PA1_template.Rmd
+```
+### note clone date and time from timestamp on files
+```
+Jun 02, 2016, 20:34 EST
+```
+### examine current directory and current files
+```{r examine_current_dir_and_files}
+getwd()
+dir(full.names = TRUE, recursive = TRUE)
+```
+### check for "data" directory, create if necessary
+```{r check_existence_data_dir}
+data_dir="./data"
+if (!file.exists(data_dir)) {
+    dir.create(data_dir)
+} else {
+    cat('data dir exists: [', data_dir, ']', '\n')
+}
+```
 
+### check for activity.csv file, unzip activity.zip into data dir if necessary
+```{r check_existence_file_activity.csv}
+data_file <- paste0(file.path(".", "data", "activity.csv"))
+if(!file.exists(data_file)) {
+        zip_file <- "activity.zip"
+        unzip(zip_file, exdir = data_dir )
+} else {
+    cat('data file exists: [', data_file, ']', '\n')
+}
+```
 
+### read input data file with read.csv
+```{r read_input_data}
+dat <- read.csv(data_file)
+```
 
 ## What is mean total number of steps taken per day?
 
