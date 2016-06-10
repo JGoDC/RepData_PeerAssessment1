@@ -36,6 +36,13 @@ drwxr-xr-x  3 j  staff    102 Jun  2 20:34 doc
 ```
 Jun 02, 2016, 20:34 EST
 ```
+### require needed packages
+```{r load_packages}
+library(dplyr)
+library(lubridate)      # for date functions
+library(ggplot2)
+```
+
 ### examine current directory and current files
 ```{r examine_current_dir_and_files}
 getwd()
@@ -64,10 +71,26 @@ if(!file.exists(data_file)) {
 
 ### read input data file with read.csv
 ```{r read_input_data}
-dat <- read.csv(data_file)
+dat <- read.csv( "./data/activity.csv", sep=",", stringsAsFactors = FALSE )
+
+# closeAllConnections()	# doesn't always prevent warnings on unused connections
+
+```
+
+### summarise total steps by date, create a histogram plot:
+```{r summarise_total_steps_by_date}
+dat_df <- tbl_df(dat)
+dat_date_total_steps <- summarise(group_by(dat_df, date), sum(steps, na.rm = T))
+unique_dates <- as.Date(names(table(dat$date)))
+step_totals <- as.numeric(unlist(dat_date_total_steps[2]))
+
+plot(unique_dates, step_totals, type="s", lwd=2, col="green", pch=2, 
+     xlab="Dates", ylab="Total Steps", main="Total Steps Per Day")
+lines(unique_dates, step_totals, type="h", lwd=2, col="green")
 ```
 
 ## What is mean total number of steps taken per day?
+
 
 
 
