@@ -1,7 +1,7 @@
 ---
 title: "Reproducible Research: Peer Assessment 1"
 author: "J Go"
-date: "June 5, 2016"
+date last updated: "June 11, 2016"
 output: 
   html_document:
     keep_md: true
@@ -89,14 +89,43 @@ plot(unique_dates, step_totals, type="s", lwd=2, col="green", pch=2,
 lines(unique_dates, step_totals, type="h", lwd=2, col="green")
 ```
 
-## What is mean total number of steps taken per day?
+## What is mean and median of the total number of steps taken per day?
+```{r mean_and_median_of_total_steps_by_date}
+# mean steps taken in a day over the entire 61 day period [9354.23]
+mean_of_total_steps_per_day <- mean(as.numeric(unlist(dat_date_total_steps[,2])))
+# median steps taken in a day over the entire 61 day period [10395]
+median_of_total_steps_per_day <- median(as.numeric(unlist(dat_date_total_steps[,2])))
+```
 
+### The mean of the total number of steps taken in a day is:
+`r I(mean_of_total_steps_per_day)`
 
-
+### The median of the total number of steps taken in a day is: 
+`r I(median_of_total_steps_per_day)`
 
 ## What is the average daily activity pattern?
+```{r mean_steps_by_5_minute_intervals}
+average_total_steps_per_interval <- summarise(group_by(dat_df, interval), mean(steps, na.rm = T))
+step_average_per_interval <- as.numeric(unlist(average_total_steps_per_interval[2]))
+intervals <- as.numeric(unlist(average_total_steps_per_interval[1]))
 
+plot(intervals, step_average_per_interval, type="l", lwd=2, col="purple", pch=2,
+     xlab="Five Minute Intervals", ylab="Average Steps", main="Average Steps Per Interval")
+```
 
+### Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
+
+```{r interval_with_max_steps}
+max_number_steps_perinterval <- max(step_average_per_interval) # 206.1698
+
+library(nnet)
+num_max_step_interval <- which.is.max(step_average_per_interval) # 104th interval has max value
+
+interval_max_steps <- intervals[which.is.max(step_average_per_interval)]    # corresponds to 835 ie 08:35 AM
+```
+
+### The interval which has the maximum number of steps is this interval corresponding to the time 8:35 AM: 
+`r I(interval_max_steps)`
 
 ## Imputing missing values
 
