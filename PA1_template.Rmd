@@ -1,7 +1,7 @@
 ---
 title: "Reproducible Research: Peer Assessment 1"
-author: "J Go"
-date last updated: "June 11, 2016"
+author: "J Go"  
+date last updated: "June 12, 2016"
 output: 
   html_document:
     keep_md: true
@@ -54,7 +54,7 @@ data_dir="./data"
 if (!file.exists(data_dir)) {
     dir.create(data_dir)
 } else {
-    cat('data dir exists: [', data_dir, ']', '\n')
+    cat('data dir exists from previous run: [', data_dir, ']', '\n')
 }
 ```
 
@@ -65,16 +65,13 @@ if(!file.exists(data_file)) {
         zip_file <- "activity.zip"
         unzip(zip_file, exdir = data_dir )
 } else {
-    cat('data file exists: [', data_file, ']', '\n')
+    cat('data file exists from previous run: [', data_file, ']', '\n')
 }
 ```
 
 ### read input data file with read.csv
 ```{r read_input_data}
 dat <- read.csv( "./data/activity.csv", sep=",", stringsAsFactors = FALSE )
-
-# closeAllConnections()	# doesn't always prevent warnings on unused connections
-
 ```
 
 ### summarise total steps by date, create a histogram plot:
@@ -174,7 +171,7 @@ unique_dates <- as.Date(names(table(dat$date)))
 step_totals <- as.numeric(unlist(dat_date_total_steps[2]))
 
 plot(unique_dates, step_totals, type="s", lwd=2, col="blue", pch=2, 
-     xlab="Dates", ylab="Total Steps", main="Total Steps Per Day")
+     xlab="Dates", ylab="Total Steps", main="Total Steps Per Day after Removing NAs")
 lines(unique_dates, step_totals, type="h", lwd=2, col="blue")
 ```
 
@@ -233,6 +230,25 @@ dat_df$wday <- weekday_weekend
 ## Make a panel plot containing a time series plot (i.e. 𝚝𝚢𝚙𝚎 = "𝚕") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis). 
 
 ```{r make_panel_plot}
-# See the README file in the GitHub repository to see an example of what this plot should look like using simulated data.
+# See the README file in the GitHub repository to see an example of what this plot should look like using simulated data.  Says can use any plotting system so for now using plot.
 
+## Make a panel plot containing a time series plot (i.e. 𝚝𝚢𝚙𝚎 = "𝚕") of the 5-minute interval (x-axis) and the average number of steps taken, averagedacross all weekday days or weekend days (y-axis).  
+
+subsets <- split(dat_df, dat_df$wday, drop=TRUE)
+weekday_df<-subsets[[1]]
+weekend_df<-subsets[[2]]
+
+weekday_average_total_steps_per_interval <- summarise(group_by(weekday_df, interval), mean(steps, na.rm = T))
+weekend_average_total_steps_per_interval <- summarise(group_by(weekend_df, interval), mean(steps, na.rm = T))
+
+weekday_step_average_per_interval <- as.numeric(unlist(weekday_average_total_steps_per_interval[2]))
+weekend_step_average_per_interval <- as.numeric(unlist(weekend_average_total_steps_per_interval[2]))
+weekday_intervals <- as.numeric(unlist(weekday_average_total_steps_per_interval[1]))
+weekend_intervals <- as.numeric(unlist(weekend_average_total_steps_per_interval[1]))
+
+par(mfrow = c(2,1))
+plot(weekend_intervals, weekend_step_average_per_interval, type="l", lwd=2, col="purple", pch=2,
+xlab="Intervals", ylab="Average Steps", main="Average Steps Per Weekend Interval")
+plot(weekday_intervals, weekday_step_average_per_interval, type="l", lwd=2, col="blue", pch=2,
+xlab="Intervals", ylab="Average Steps", main="Average Steps Per Weekday Interval")
 ```
